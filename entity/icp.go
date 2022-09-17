@@ -7,4 +7,5 @@ type Icp struct {
 	IcpCode string `json:"icpCode"`
 	Name string `json:"name"`
 	PassTime string `json:"passTime"`
+	CacheTime string `json:"cacheTime"`
 }

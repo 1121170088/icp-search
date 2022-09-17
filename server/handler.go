@@ -7,6 +7,7 @@ import (
 	"icp-search/entity"
 	init_ "icp-search/init"
 	"icp-search/upstream"
+	"icp-search/utils"
 	"log"
 	"net/http"
 )
@@ -56,6 +57,7 @@ func Start()  {
 					resp.Data = icp
 					resp.Code = 1
 					resp.Msg = "ok"
+					resp.Data.CacheTime = utils.CurrentDateStr()
 					err := dao.Insert(icp)
 					if err != nil {
 						log.Printf("%v", err.Error())

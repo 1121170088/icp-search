@@ -47,9 +47,10 @@ func Search(domain string) (icp *entity.Icp, err error) {
 		IcpCode:  "",
 		Name:     "",
 		PassTime: "",
+		CacheTime: "",
 	}
 
-	err = stmt.QueryRow(domain).Scan(&icp.Domain, &icp.Unit, &icp.Type, &icp.IcpCode, &icp.Name, &icp.PassTime)
+	err = stmt.QueryRow(domain).Scan(&icp.Domain, &icp.Unit, &icp.Type, &icp.IcpCode, &icp.Name, &icp.PassTime, &icp.CacheTime)
 	if err != nil {
 		return nil, err
 	}
@@ -57,13 +58,13 @@ func Search(domain string) (icp *entity.Icp, err error) {
 }
 
 func Insert(icp *entity.Icp) error  {
-	stmt, err := db.Prepare(`insert into icps(domain, unit, type, icpCode, name, passTime)
-			    value(?,?,?,?,?,?) on duplicate key update unit=?, type=?, icpCode=?,name=?, passTime=?`)
+	stmt, err := db.Prepare(`insert into icps(domain, unit, type, icpCode, name, passTime, cacheTime)
+			    value(?,?,?,?,?,?,?) on duplicate key update unit=?, type=?, icpCode=?,name=?, passTime=?, cacheTime=?`)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(icp.Domain, icp.Unit, icp.Type, icp.IcpCode, icp.Name, icp.PassTime,
-		icp.Unit, icp.Type, icp.IcpCode, icp.Name, icp.PassTime)
+	_, err = stmt.Exec(icp.Domain, icp.Unit, icp.Type, icp.IcpCode, icp.Name, icp.PassTime, icp.CacheTime,
+		icp.Unit, icp.Type, icp.IcpCode, icp.Name, icp.PassTime, icp.CacheTime)
 	return err
 }
