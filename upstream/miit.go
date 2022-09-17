@@ -5,8 +5,9 @@ import (
 	"icp-search/entity"
 	"log"
 )
-
-func Search3(domain string) (*entity.Icp, error) {
+type MiitUpstream struct{}
+var Miit = &MiitUpstream{}
+func (u *MiitUpstream) Search(domain string) (*entity.Icp, error) {
 
 	icp2 := &abbreviateinfo.Icp{}
 

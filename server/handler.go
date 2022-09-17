@@ -13,6 +13,7 @@ import (
 func Start()  {
 	http.HandleFunc("/icp", func(writer http.ResponseWriter, request *http.Request) {
 		domain := request.URL.Query().Get("domain")
+		up := request.URL.Query().Get("up")
 		header := writer.Header()
 		header.Add("Content-Type", "application/json;charset=UTF-8")
 		var err error
@@ -30,7 +31,15 @@ func Start()  {
 		icp, err := dao.Search(domain)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				icp, err := upstream.Search2(domain)
+				var upStream upstream.Upstream
+				switch up {
+				case "1":upStream = upstream.Mxnzp
+				case "2":upStream = upstream.BeiAnHao
+				case "3":upStream = upstream.Miit
+				default:
+					upStream = upstream.Mxnzp
+				}
+				icp, err := upStream.Search(domain)
 				if err != nil {
 					if err == upstream.SearchErr {
 						resp.Code = 2

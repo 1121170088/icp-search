@@ -17,8 +17,9 @@ var Norecord = errors.New("no recrod")
 
 var errored = false
 var date string
-
-func Search2(domain string) (*entity.Icp, error) {
+type MxnzpUpstream struct{}
+var Mxnzp = &MxnzpUpstream{}
+func (u *MxnzpUpstream) Search(domain string) (*entity.Icp, error) {
 
 	if errored {
 		ndata := time.Now().Format(time.Now().Format("20060102"))
