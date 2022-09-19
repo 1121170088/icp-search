@@ -32,7 +32,17 @@ func (u *MxnzpUpstream) Search(domain string) (*entity.Icp, error) {
 
 	b64d:= base64.StdEncoding.EncodeToString([]byte(domain))
 	url := fmt.Sprintf(init_.Cfg.Upstream, b64d)
-	resp, err := http.Get(url)
+	client := &http.Client{}
+	reqest, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	reqest.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0")
+	reqest.Header.Add("Pragma", "no-cache")
+	reqest.Header.Add("Cache-Control", "Cache-Control")
+	reqest.Header.Add("Accept", "application/json")
+
+	resp, err := client.Do(reqest)
 	if err != nil {
 		return nil, err
 	}
