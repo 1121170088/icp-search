@@ -8,4 +8,5 @@ type Icp struct {
 	Name string `json:"name"`
 	PassTime string `json:"passTime"`
 	CacheTime string `json:"cacheTime"`
+	Code int `json:"code"`
 }

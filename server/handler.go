@@ -46,18 +46,34 @@ func Start()  {
 						resp.Code = 2
 						resp.Msg = "三方受限"
 					} else if err == upstream.Norecord {
-						resp.Code = 0
+						icp = &entity.Icp{
+							Domain:    domain,
+							Unit:      "",
+							Type:      "",
+							IcpCode:   "",
+							Name:      "",
+							PassTime:  "",
+							CacheTime: utils.CurrentDateTimeStr(),
+							Code:      0,
+						}
+						resp.Data = icp
+						resp.Code = icp.Code
 						resp.Msg = "可能没备案"
+						err := dao.Insert(icp)
+						if err != nil {
+							log.Printf("%v", err.Error())
+						}
 					} else {
 						resp.Code = 2
 						resp.Msg = "代码出错"
 						log.Printf("%s", err.Error())
 					}
 				} else {
+					icp.Code = 1
+					icp.CacheTime = utils.CurrentDateTimeStr()
 					resp.Data = icp
-					resp.Code = 1
+					resp.Code = icp.Code
 					resp.Msg = "ok"
-					resp.Data.CacheTime = utils.CurrentDateStr()
 					err := dao.Insert(icp)
 					if err != nil {
 						log.Printf("%v", err.Error())
@@ -68,8 +84,11 @@ func Start()  {
 				log.Printf("%s", err.Error())
 			}
 		} else {
-			resp.Code = 1
+			resp.Code = icp.Code
 			resp.Msg = "ok"
+			if icp.Code == 0 {
+				resp.Msg = "可能没备案"
+			}
 			resp.Data = icp
 		}
 		bytes, _ := json.Marshal(resp)
