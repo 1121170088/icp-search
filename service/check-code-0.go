@@ -3,11 +3,11 @@ package service
 import (
 	"icp-search/dao"
 	"icp-search/entity"
+	init_ "icp-search/init"
 	"icp-search/upstream"
 	"icp-search/utils"
 	"log"
 	"sync"
-	init_ "icp-search/init"
 )
 
 var (

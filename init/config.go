@@ -17,8 +17,11 @@ var (
 type Config struct {
 	Dsn string `yaml:"dsn"`
 	Addr string `yaml:"addr"`
+	Doh string `yaml:"doh"`
+	IpInfoServer string `yaml:"ip-info-server"`
 	Upstream string `yaml:"upstream"`
 	Code0Index  int  `yaml:"code0-index"`
+	IpIndex int `yaml:"ip-index"`
 }
 
 
@@ -30,8 +33,11 @@ func init()  {
 	Cfg = &Config{
 		Dsn:"user:password@/database",
 		Addr: "127.0.0.1:9090",
+		Doh: "dns.alidns.com",
+		IpInfoServer: "",
 		Upstream: "",
 		Code0Index: 0,
+		IpIndex: 0,
 	}
 	if _, err := os.Stat(configFile); err != nil {
 		log.Printf("config file dosn't exist, writing it")

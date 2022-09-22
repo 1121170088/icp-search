@@ -7,6 +7,7 @@ import (
 	"icp-search/entity"
 	init_ "icp-search/init"
 	"icp-search/service"
+	"icp-search/service/ip"
 	"icp-search/upstream"
 	"icp-search/utils"
 	"log"
@@ -98,6 +99,10 @@ func Start()  {
 	})
 	http.HandleFunc("/check0", func(writer http.ResponseWriter, request *http.Request) {
 		go service.CheckCode0()
+		writer.Write([]byte("ok"))
+	})
+	http.HandleFunc("/checkIp", func(writer http.ResponseWriter, request *http.Request) {
+		go ip.CheckIp()
 		writer.Write([]byte("ok"))
 	})
 	http.ListenAndServe(init_.Cfg.Addr, nil)
