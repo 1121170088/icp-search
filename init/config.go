@@ -15,9 +15,10 @@ var (
 )
 
 type Config struct {
-	Dsn string
-	Addr string
-	Upstream string
+	Dsn string `yaml:"dsn"`
+	Addr string `yaml:"addr"`
+	Upstream string `yaml:"upstream"`
+	Code0Index  int  `yaml:"code0-index"`
 }
 
 
@@ -30,17 +31,11 @@ func init()  {
 		Dsn:"user:password@/database",
 		Addr: "127.0.0.1:9090",
 		Upstream: "",
+		Code0Index: 0,
 	}
 	if _, err := os.Stat(configFile); err != nil {
 		log.Printf("config file dosn't exist, writing it")
-		bytes, err := yaml.Marshal(Cfg)
-		if err != nil {
-			log.Fatal(err)
-		}
-		err = os.WriteFile(configFile, bytes, os.ModePerm)
-		if err != nil {
-			log.Fatal(err)
-		}
+		WriteConfig()
 		os.Exit(1)
 	} else {
 		bytes, err := os.ReadFile(configFile)
@@ -52,5 +47,16 @@ func init()  {
 		if err != nil {
 			log.Fatal(err)
 		}
+	}
+}
+
+func WriteConfig()  {
+	bytes, err := yaml.Marshal(Cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = os.WriteFile(configFile, bytes, os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
 	}
 }

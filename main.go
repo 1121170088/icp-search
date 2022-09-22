@@ -22,4 +22,5 @@ func main()  {
 	<-sigCh
 
 	dao.UnInit()
+	init_.WriteConfig()
 }

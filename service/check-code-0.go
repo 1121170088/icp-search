@@ -7,13 +7,13 @@ import (
 	"icp-search/utils"
 	"log"
 	"sync"
+	init_ "icp-search/init"
 )
 
 var (
 	checking = false
 	mutex sync.Mutex
 
-	id = 0
 	code = 0
 	limit = 100
 )
@@ -26,7 +26,7 @@ func CheckCode0()  {
 	setChecking()
 	defer setUnChecking()
 back:
-	icps, err := dao.SearchByCodeId(id, code, limit)
+	icps, err := dao.SearchByCodeId(init_.Cfg.Code0Index, code, limit)
 	if err != nil {
 		log.Printf(err.Error())
 		return
@@ -53,7 +53,7 @@ back:
 			log.Printf(err.Error())
 			break
 		}
-		id = nIcp.Id
+		init_.Cfg.Code0Index = nIcp.Id
 	}
 	if err == nil {
 		goto back

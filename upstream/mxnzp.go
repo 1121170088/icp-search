@@ -21,14 +21,14 @@ type MxnzpUpstream struct{}
 var Mxnzp = &MxnzpUpstream{}
 func (u *MxnzpUpstream) Search(domain string) (*entity.Icp, error) {
 
-	if errored {
-		ndata := time.Now().Format(time.Now().Format("20060102"))
-		if ndata != date {
-			errored = false
-		} else {
-			return nil, SearchErr
-		}
-	}
+	//if errored {
+	//	ndata := time.Now().Format(time.Now().Format("20060102"))
+	//	if ndata != date {
+	//		errored = false
+	//	} else {
+	//		return nil, SearchErr
+	//	}
+	//}
 
 	b64d:= base64.StdEncoding.EncodeToString([]byte(domain))
 	url := fmt.Sprintf(init_.Cfg.Upstream, b64d)
