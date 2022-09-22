@@ -6,6 +6,7 @@ import (
 	"icp-search/dao"
 	"icp-search/entity"
 	init_ "icp-search/init"
+	"icp-search/service"
 	"icp-search/upstream"
 	"icp-search/utils"
 	"log"
@@ -94,6 +95,10 @@ func Start()  {
 		bytes, _ := json.Marshal(resp)
 		writer.Write(bytes)
 
+	})
+	http.HandleFunc("/check0", func(writer http.ResponseWriter, request *http.Request) {
+		go service.CheckCode0()
+		writer.Write([]byte("ok"))
 	})
 	http.ListenAndServe(init_.Cfg.Addr, nil)
 }

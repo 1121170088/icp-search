@@ -58,6 +58,7 @@ func (u *MxnzpUpstream) Search(domain string) (*entity.Icp, error) {
 		return nil, err
 	}
 	if res.Code == 1 {
+		res.Data.Code = 1
 		return res.Data, nil
 	}
 	if res.Code == 0 {

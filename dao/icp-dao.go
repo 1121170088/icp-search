@@ -41,6 +41,7 @@ func Search(domain string) (icp *entity.Icp, err error) {
 	}
 	defer stmt.Close()
 	icp = &entity.Icp{
+		Id: 0,
 		Domain:   "",
 		Unit:     "",
 		Type:     "",
@@ -51,7 +52,7 @@ func Search(domain string) (icp *entity.Icp, err error) {
 		Code: 0,
 	}
 
-	err = stmt.QueryRow(domain).Scan(&icp.Domain, &icp.Unit, &icp.Type, &icp.IcpCode, &icp.Name, &icp.PassTime, &icp.CacheTime, &icp.Code)
+	err = stmt.QueryRow(domain).Scan(&icp.Id, &icp.Domain, &icp.Unit, &icp.Type, &icp.IcpCode, &icp.Name, &icp.PassTime, &icp.CacheTime, &icp.Code)
 	if err != nil {
 		return nil, err
 	}
@@ -68,4 +69,23 @@ func Insert(icp *entity.Icp) error  {
 	_, err = stmt.Exec(icp.Domain, icp.Unit, icp.Type, icp.IcpCode, icp.Name, icp.PassTime, icp.CacheTime, icp.Code,
 		icp.Unit, icp.Type, icp.IcpCode, icp.Name, icp.PassTime, icp.CacheTime,icp.Code)
 	return err
+}
+
+func SearchByCodeId(id int, code int, limit int) (list []*entity.Icp, err error) {
+	stmt, err := db.Prepare("select * from icps where id > ? and code = ? order by id asc limit ?")
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+	rows , err := stmt.Query(id, code, limit)
+	if err != nil {
+		return nil, err
+	}
+	//defer rows.Close()
+	for rows.Next() {
+		icp := &entity.Icp{}
+		list = append(list, icp)
+		rows.Scan(&icp.Id, &icp.Domain, &icp.Unit, &icp.Type, &icp.IcpCode, &icp.Name, &icp.PassTime, &icp.CacheTime, &icp.Code)
+	}
+	return
 }

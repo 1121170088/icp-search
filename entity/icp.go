@@ -1,6 +1,7 @@
 package entity
 
 type Icp struct {
+	Id int `json:"-"`
 	Domain string `json:"domain"`
 	Unit string `json:"unit"`
 	Type string `json:"type"`
