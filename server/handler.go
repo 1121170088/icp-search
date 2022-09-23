@@ -3,6 +3,7 @@ package server
 import (
 	"database/sql"
 	"encoding/json"
+	"github.com/1121170088/find-domain/search"
 	"icp-search/dao"
 	"icp-search/entity"
 	init_ "icp-search/init"
@@ -12,6 +13,7 @@ import (
 	"icp-search/utils"
 	"log"
 	"net/http"
+	"strings"
 )
 func Start()  {
 	http.HandleFunc("/icp", func(writer http.ResponseWriter, request *http.Request) {
@@ -27,6 +29,14 @@ func Start()  {
 		}
 		if domain == "" {
 			resp.Msg = "域名不能为空"
+			bytes, _ := json.Marshal(resp)
+			writer.Write(bytes)
+			return
+		}
+		domain = strings.ToLower(domain)
+		domain = search.Search(domain)
+		if domain == "" {
+			resp.Msg = "可能不是域名"
 			bytes, _ := json.Marshal(resp)
 			writer.Write(bytes)
 			return

@@ -2,6 +2,7 @@ package init
 
 import (
 	"flag"
+	"github.com/1121170088/find-domain/search"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"
@@ -22,6 +23,7 @@ type Config struct {
 	Upstream string `yaml:"upstream"`
 	Code0Index  int  `yaml:"code0-index"`
 	IpIndex int `yaml:"ip-index"`
+	DomainSuffixFile string `yaml:"domain-suffix-file"`
 }
 
 
@@ -38,6 +40,7 @@ func init()  {
 		Upstream: "",
 		Code0Index: 0,
 		IpIndex: 0,
+		DomainSuffixFile: "",
 	}
 	if _, err := os.Stat(configFile); err != nil {
 		log.Printf("config file dosn't exist, writing it")
@@ -54,6 +57,8 @@ func init()  {
 			log.Fatal(err)
 		}
 	}
+	search.Init(Cfg.DomainSuffixFile)
+
 }
 
 func WriteConfig()  {
