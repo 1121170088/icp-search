@@ -23,6 +23,7 @@ type Config struct {
 	Upstream string `yaml:"upstream"`
 	Code0Index  int  `yaml:"code0-index"`
 	IpIndex int `yaml:"ip-index"`
+	IpCheckConCurrent int `yaml:"ip-check-concurrent"`
 	DomainSuffixFile string `yaml:"domain-suffix-file"`
 }
 
@@ -40,6 +41,7 @@ func init()  {
 		Upstream: "",
 		Code0Index: 0,
 		IpIndex: 0,
+		IpCheckConCurrent: 1,
 		DomainSuffixFile: "",
 	}
 	if _, err := os.Stat(configFile); err != nil {

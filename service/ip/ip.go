@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/babolivier/go-doh-client"
 	"icp-search/dao"
+	"icp-search/entity"
 	init_ "icp-search/init"
 	"io/ioutil"
 	"log"
@@ -18,6 +19,7 @@ var (
 	checking = false
 	mutex sync.Mutex
 	limit = 100
+	con chan bool
 )
 
 func CheckIp()  {
@@ -37,35 +39,41 @@ back:
 		log.Printf("ip-checking finished")
 		return
 	}
-	for _, icp := range icps {
-		domain := icp.Domain
-		var ip string
-		ip, err = lookup(domain)
-		if err != nil {
-			ip, err = lookup("www." + domain)
-		}
-		if err == nil {
-			icp.Ip = ip
-			isoCode := searchIsoCode(ip)
-			icp.IsoCode = isoCode
-			err = dao.Insert(icp)
-			if err != nil {
-				log.Printf(err.Error())
-				return
-			}
-			init_.Cfg.IpIndex = icp.Id
-		} else {
-			msg := fmt.Sprintf("looking up ip err %s %s", domain, err.Error())
-			log.Printf(msg)
-		}
-		err = nil
+	var icp *entity.Icp
+	for _,  icp = range icps {
+		con <- true
+		go do(icp)
 	}
-	if err == nil {
-		goto back
+	if icp != nil {
+		init_.Cfg.IpIndex = icp.Id
 	}
+	goto back
 
 }
 
+func do(icp *entity.Icp)  {
+	defer func() {
+		<- con
+	}()
+	domain := icp.Domain
+	ip, err := lookup(domain)
+	if err != nil {
+		ip, err = lookup("www." + domain)
+	}
+	if err == nil {
+		icp.Ip = ip
+		isoCode := searchIsoCode(ip)
+		icp.IsoCode = isoCode
+		err = dao.Insert(icp)
+		if err != nil {
+			log.Printf(err.Error())
+			return
+		}
+	} else {
+		msg := fmt.Sprintf("looking up ip err %s %s", domain, err.Error())
+		log.Printf(msg)
+	}
+}
 func isChecking() bool {
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -88,6 +96,7 @@ func init()  {
 		Host:  init_.Cfg.Doh, // Change this with your favourite DoH-compliant resolver.
 		Class: doh.IN,
 	}
+	con = make(chan bool, init_.Cfg.IpCheckConCurrent)
 }
 
 func lookup(domain string) (ip string, err error)  {
