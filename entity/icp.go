@@ -11,5 +11,5 @@ type Icp struct {
 	CacheTime string `json:"cacheTime"`
 	Code int `json:"code"`
 	Ip string `json:"-"`
-	IsoCode string `json:"-"`
+	IsoCode string `json:"isoCode"`
 }

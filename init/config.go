@@ -22,6 +22,7 @@ type Config struct {
 	IpInfoServer string `yaml:"ip-info-server"`
 	Upstream string `yaml:"upstream"`
 	Code0Index  int  `yaml:"code0-index"`
+	Code0ConCurrent int `yaml:"code0-concurrent"`
 	IpIndex int `yaml:"ip-index"`
 	IpCheckConCurrent int `yaml:"ip-check-concurrent"`
 	DomainSuffixFile string `yaml:"domain-suffix-file"`

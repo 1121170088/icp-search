@@ -7,12 +7,13 @@ import (
 	"icp-search/dao"
 	"icp-search/entity"
 	init_ "icp-search/init"
-	"icp-search/service"
+	"icp-search/service/beian"
 	"icp-search/service/ip"
 	"icp-search/upstream"
 	"icp-search/utils"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 )
 func Start()  {
@@ -108,11 +109,31 @@ func Start()  {
 
 	})
 	http.HandleFunc("/check0", func(writer http.ResponseWriter, request *http.Request) {
-		go service.CheckCode0()
+		var err error
+		var id = -1
+		idstr := request.URL.Query().Get("id")
+		if idstr != "" {
+			id, err = strconv.Atoi(idstr)
+			if err != nil {
+				writer.Write([]byte("fail"))
+				return
+			}
+		}
+		go beian.CheckCode0(id)
 		writer.Write([]byte("ok"))
 	})
 	http.HandleFunc("/checkIp", func(writer http.ResponseWriter, request *http.Request) {
-		go ip.CheckIp()
+		var err error
+		var id = -1
+		idstr := request.URL.Query().Get("id")
+		if idstr != "" {
+			id, err = strconv.Atoi(idstr)
+			if err != nil {
+				writer.Write([]byte("fail"))
+				return
+			}
+		}
+		go ip.CheckIp(id)
 		writer.Write([]byte("ok"))
 	})
 	http.ListenAndServe(init_.Cfg.Addr, nil)

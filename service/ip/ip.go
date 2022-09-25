@@ -22,15 +22,18 @@ var (
 	con chan bool
 )
 
-func CheckIp()  {
+func CheckIp(id int)  {
 	if isChecking() {
 		log.Printf("ip-checking has been running. ")
 		return
 	}
 	setChecking()
 	defer setUnChecking()
+	if id != -1 {
+		init_.Cfg.IpIndex = id
+	}
 back:
-	icps, err := dao.SearchById(init_.Cfg.IpIndex, limit)
+	icps, err := dao.SearchFromId(init_.Cfg.IpIndex, limit)
 	if err != nil {
 		log.Printf(err.Error())
 		return

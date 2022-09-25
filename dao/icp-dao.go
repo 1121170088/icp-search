@@ -73,13 +73,13 @@ func Insert(icp *entity.Icp) error  {
 	return err
 }
 
-func SearchByCodeId(id int, code int, limit int) (list []*entity.Icp, err error) {
-	stmt, err := db.Prepare("select * from icps where id > ? and code = ? order by id asc limit ?")
+func SearchCode0FromId(id int, limit int) (list []*entity.Icp, err error) {
+	stmt, err := db.Prepare("select * from icps where id > ? and code = 0 order by id asc limit ?")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
-	rows , err := stmt.Query(id, code, limit)
+	rows , err := stmt.Query(id, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func SearchByCodeId(id int, code int, limit int) (list []*entity.Icp, err error)
 	return
 }
 
-func SearchById(id int, limit int) (list []*entity.Icp, err error) {
+func SearchFromId(id int, limit int) (list []*entity.Icp, err error) {
 	stmt, err := db.Prepare("select * from icps where id > ? order by id asc limit ?")
 	if err != nil {
 		return nil, err
@@ -110,3 +110,4 @@ func SearchById(id int, limit int) (list []*entity.Icp, err error) {
 	}
 	return
 }
+
