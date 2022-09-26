@@ -4,6 +4,7 @@ import (
 	"icp-search/dao"
 	init_ "icp-search/init"
 	s "icp-search/server"
+	"icp-search/service/geoip"
 	"log"
 	"os"
 	"os/signal"
@@ -13,6 +14,7 @@ import (
 func main()  {
 	log.Printf("%v", init_.Cfg)
 	dao.Init()
+	geoip.Init(init_.Cfg.CountryDbFile)
 
 	go s.Start()
 
@@ -21,6 +23,7 @@ func main()  {
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 	<-sigCh
 
+	geoip.Uninit()
 	dao.UnInit()
 	init_.WriteConfig()
 }

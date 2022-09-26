@@ -19,7 +19,7 @@ type Config struct {
 	Dsn string `yaml:"dsn"`
 	Addr string `yaml:"addr"`
 	Doh string `yaml:"doh"`
-	IpInfoServer string `yaml:"ip-info-server"`
+	CountryDbFile string `yaml:"country-db-file"`
 	Upstream string `yaml:"upstream"`
 	Code0Index  int  `yaml:"code0-index"`
 	Code0ConCurrent int `yaml:"code0-concurrent"`
@@ -38,12 +38,12 @@ func init()  {
 		Dsn:"user:password@/database",
 		Addr: "127.0.0.1:9090",
 		Doh: "dns.alidns.com",
-		IpInfoServer: "",
+		CountryDbFile: "Country.mmdb",
 		Upstream: "",
 		Code0Index: 0,
 		IpIndex: 0,
 		IpCheckConCurrent: 1,
-		DomainSuffixFile: "",
+		DomainSuffixFile: "public_suffix_list.dat",
 	}
 	if _, err := os.Stat(configFile); err != nil {
 		log.Printf("config file dosn't exist, writing it")

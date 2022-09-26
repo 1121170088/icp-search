@@ -1,16 +1,14 @@
 package ip
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/babolivier/go-doh-client"
 	"icp-search/dao"
 	"icp-search/entity"
 	init_ "icp-search/init"
-	"io/ioutil"
+	"icp-search/service/geoip"
 	"log"
-	"net/http"
 	"sync"
 )
 
@@ -115,24 +113,5 @@ func lookup(domain string) (ip string, err error)  {
 }
 
 func searchIsoCode(ip string) string  {
-	response, err := http.Get(init_.Cfg.IpInfoServer + ip)
-	if err != nil {
-		msg := fmt.Sprintf("ip info server err -> ip: %s, err: %s", ip, err.Error())
-		log.Printf(msg)
-		return ""
-	}
-	defer response.Body.Close()
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Printf(err.Error())
-		return ""
-	}
-	var info = &struct {
-		Code string
-	}{}
-	err = json.Unmarshal(body, info)
-	if err != nil {
-		log.Printf(err.Error())
-	}
-	return info.Code
+	return geoip.IsoCode(ip)
 }

@@ -1,12 +1,15 @@
 package beian
 
 import (
+	"database/sql"
+	"github.com/1121170088/find-domain/search"
 	"icp-search/dao"
 	"icp-search/entity"
 	init_ "icp-search/init"
 	"icp-search/upstream"
 	"icp-search/utils"
 	"log"
+	"strings"
 	"sync"
 )
 
@@ -90,4 +93,58 @@ func setUnChecking()  {
 }
 func init()  {
 	con = make(chan bool, init_.Cfg.Code0ConCurrent)
+}
+
+func Commit(domains []string)  {
+	for _, domain := range domains {
+		domain = strings.ToLower(domain)
+		domain = search.Search(domain)
+		if domain == "" {
+			continue
+		}
+		con <- true
+		go commit(domain)
+	}
+}
+
+func commit(domain string)  {
+	defer func() {
+		<- con
+	}()
+	_, err := dao.Search(domain)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			var upStream upstream.Upstream
+			upStream = upstream.Mxnzp
+			icp, err := upStream.Search(domain)
+			if err != nil {
+				if err == upstream.Norecord {
+					icp = &entity.Icp{
+						Domain:    domain,
+						Unit:      "",
+						Type:      "",
+						IcpCode:   "",
+						Name:      "",
+						PassTime:  "",
+						CacheTime: utils.CurrentDateTimeStr(),
+						Code:      0,
+					}
+					err := dao.Insert(icp)
+					if err != nil {
+						log.Printf("%v", err.Error())
+					}
+				}
+				return
+			} else {
+				icp.Code = 1
+				icp.CacheTime = utils.CurrentDateTimeStr()
+				err := dao.Insert(icp)
+				if err != nil {
+					log.Printf("%v", err.Error())
+				}
+			}
+		} else {
+			log.Printf("%s", err.Error())
+		}
+	}
 }

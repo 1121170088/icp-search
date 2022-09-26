@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bufio"
 	"database/sql"
 	"encoding/json"
 	"github.com/1121170088/find-domain/search"
@@ -11,6 +12,7 @@ import (
 	"icp-search/service/ip"
 	"icp-search/upstream"
 	"icp-search/utils"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -134,6 +136,32 @@ func Start()  {
 			}
 		}
 		go ip.CheckIp(id)
+		writer.Write([]byte("ok"))
+	})
+	http.HandleFunc("/commit-domains", func(writer http.ResponseWriter, request *http.Request) {
+		f, _, err := request.FormFile("file")
+		if err != nil {
+			log.Printf(err.Error())
+			writer.Write([]byte("fail"))
+			return
+		}
+
+		rd := bufio.NewReader(f)
+		domains := make([]string, 0)
+		for {
+			line, err := rd.ReadString('\n')
+			if err != nil || err == io.EOF {
+				break
+			}
+			line = strings.Trim(line, "\n")
+			line = strings.Trim(line, "\r")
+			line = strings.TrimSpace(line)
+			if line == "" {
+				continue
+			}
+			domains = append(domains, line)
+		}
+		go beian.Commit(domains)
 		writer.Write([]byte("ok"))
 	})
 	http.ListenAndServe(init_.Cfg.Addr, nil)
